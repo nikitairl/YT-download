@@ -77,8 +77,6 @@ A pre-compiled executable is available in the `dist` directory. Due to the way i
 
 ## License
 
-## License
-
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. You may use, distribute, and modify this code for non-commercial purposes. For commercial use, please contact the author for permission
 
 ## Acknowledgements
