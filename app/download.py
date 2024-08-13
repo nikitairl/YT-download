@@ -1,22 +1,27 @@
-import shutil
 import logging
+import os
+import shutil
 
+import ffmpeg
 from fastapi import HTTPException
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
+from pytubefix.innertube import _default_clients
 
-from utils import merge_audio_video
+from constants import DOWNLOAD_TMP_DIR, AUDIO_DIR, VIDEO_DIR
+
+_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 
 
 class Downloader:
-    DOWNLOAD_TMP_DIR = "./downloads/tmp/"
-    AUDIO_DIR = "./downloads/audio/"
-    VIDEO_DIR = "./downloads/video (no sound)/"
+    DOWNLOAD_TMP_DIR = DOWNLOAD_TMP_DIR
+    AUDIO_DIR = AUDIO_DIR
+    VIDEO_DIR = VIDEO_DIR
 
-    def __init__(
-        self, url: str, resolution: str = "1080"
-    ):
+    def __init__(self, url: str, resolution: str = "720"):
         self.url = url
+        self.audio = None
+        self.video = None
         try:
             self.yt = YouTube(self.url, on_progress_callback=on_progress)
         except Exception as e:
@@ -63,8 +68,28 @@ class Downloader:
         try:
             self.audio_download(path=self.DOWNLOAD_TMP_DIR)
             self.video_download(path=self.DOWNLOAD_TMP_DIR)
-            merge_audio_video(self.yt.title + ".mp3", self.yt.title + ".mp4")
-            shutil.rmtree(self.DOWNLOAD_TMP_DIR)
+            self.merge_audio_video(
+                self.yt.title + ".mp3", self.yt.title + ".mp4"
+            )
+            self.cleanup()
         except Exception as e:
             logging.error(f"Full download failed: {e}")
             raise HTTPException(status_code=500, detail="Full download failed")
+
+    def merge_audio_video(self, audio_title, video_title):
+        try:
+            input_video = ffmpeg.input(self.DOWNLOAD_TMP_DIR + video_title)
+            input_audio = ffmpeg.input(self.DOWNLOAD_TMP_DIR + audio_title)
+            ffmpeg.concat(input_video, input_audio, v=1, a=1).output(
+                "./downloads/" + video_title
+            ).run()
+        except Exception as e:
+            logging.error(f"Audio and video merge failed: {e}")
+            raise HTTPException(
+                status_code=500, detail="Audio and video merge failed"
+            )
+
+    @staticmethod
+    def cleanup():
+        if os.path.exists(DOWNLOAD_TMP_DIR):
+            shutil.rmtree(DOWNLOAD_TMP_DIR)
