@@ -19,7 +19,8 @@ Downloader Application is an open-source tool designed to help you download YouT
 
 ### Windows Executable
 
-A pre-compiled executable is available in the `dist` directory. Due to the way it is packaged, it may be flagged as a virus by Windows Defender. Rest assured, it is not a virus. If you have concerns, you can compile the application yourself by following the instructions below.
+A pre-compiled executable is available in the `dist` directory. Due to the way it is packaged, it may be flagged as a virus. Rest assured, it is not a virus. If you have concerns, you can compile the application yourself by following the instructions below.
+[Virus Total](https://www.virustotal.com/gui/file/e23a33010055722b6a6943052094f21b22009b78416c74e9787d442d7a032459/detection)
 
 ### Compile from Source
 
@@ -74,8 +75,6 @@ A pre-compiled executable is available in the `dist` directory. Due to the way i
 4. **Audio Only (Optional):** Check the box if you want to download only the audio.
 
 5. **Start Download:** Click the "Download" button and monitor the progress in a console.
-
-## License
 
 ## License
 
