@@ -82,7 +82,7 @@ class Downloader:
             input_audio = ffmpeg.input(self.DOWNLOAD_TMP_DIR + audio_title)
             ffmpeg.concat(input_video, input_audio, v=1, a=1).output(
                 "./downloads/" + video_title
-            ).run()
+            ).run(overwrite_output=True)
         except Exception as e:
             logging.error(f"Audio and video merge failed: {e}")
             raise HTTPException(
